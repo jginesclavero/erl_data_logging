@@ -1,0 +1,19 @@
+<launch>
+  <node pkg="roah_rsbb_comm_ros" type="comm" name="roah_rsbb_comm" respawn="true">
+    <param name="team_name" type="string" value="UC3M"/>
+    <param name="robot_name" type="string" value="Tiago-56"/>
+    <param name="rsbb_key" type="string" value="D2wydiJX"/>
+    <param name="rsbb_host" type="string" value="10.2.0.10"/>
+  </node>
+
+  <node name = "robot_pose_publisher" pkg = "erl_data_logging" type = "robot_pose_publisher" respawn = "false" output = "screen"/>
+  <arg name = "tbm" default="TBM2"/>
+  <arg name = "pathToRosbag" value = "/home/jgines/$(arg tbm)_date_UC3M.bag"/>
+  <remap from = "/erlc/scan_0" to = "/scan" />
+  <remap from = "/erlc/rgb_0/camera_info" to ="/xtion/rgb/camera_info" />
+  <remap from = "/erlc/rgb_0/image" to = "/xtion/rgb/image_rect_color" />
+  <remap from = "/erlc/trajectory" to = "/move_base/GlobalPlanner/plan" />
+
+  <node pkg="rosbag" type="record" name="rosbag_erl"
+       args="record /erlc/scan_0 /erlc/rgb_0/camera_info /erlc/rgb_0/image /erlc/trajectory /erlc/robot_pose tf -O $(arg pathToRosbag)" />
+</launch>
